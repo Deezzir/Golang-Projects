@@ -4,4 +4,5 @@ The repository contains **10** projects that I built as a part of learning `Go` 
 
 ### Resository Structure
 
-- `crud` - a folder with GoLang CRUD API project
+- `reps-crud`  - a folder with simple Repository CRUD API that picks the data from the mock_data.json file
+- `reps-store` - a folder with  MySQL Repository Management System
