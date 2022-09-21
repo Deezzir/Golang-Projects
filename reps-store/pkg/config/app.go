@@ -1,49 +1,70 @@
 package config
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"reps-store/pkg/utils"
 
 	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"log"
 	"os"
+	"time"
 )
 
 var (
-	db    *gorm.DB
-	table string = "repositories"
+	db     *gorm.DB
+	dbname string = "test"
+	tcp    string = "tcp(127.0.0.1:3306)"
 )
 
-func getCredentials() string {
-	err := godotenv.Load(".env")
+func init() {
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("[ERROR]: failed to load the .env file\n")
+		utils.ErrLogger.Fatalf("Failed to load the .env file - %s\n", err.Error())
 	}
+}
 
-	user := os.Getenv("DBUSERNAME")
-	pass := os.Getenv("DBPASSWORD")
+func getCredentials() string {
+	user := os.Getenv("DB_USERNAME")
+	pass := os.Getenv("DB_PASSWORD")
 
 	if user == "" || pass == "" {
-		log.Fatalf("[ERROR]: DBUSERNAME or DBPASSWORD is not present in the .env file")
+		utils.ErrLogger.Fatalln("DBUSERNAME or DBPASSWORD is not present in the .env file")
 	}
 
 	return user + ":" + pass
 }
 
-func SetDB() {
+func SetDataBase() {
 	if db == nil {
-		creds := getCredentials()
+		credentials := getCredentials()
+		dsn := credentials + "@" + tcp + "/" + dbname + "?charset=utf8mb4&parseTime=True&loc=Local"
 
-		d, err := gorm.Open("mysql", creds+"/"+table+"?charset=utf8&parseTime=true&loc=local")
+		logger := logger.New(
+			log.New(os.Stderr, "[DATABASE] ", log.LstdFlags),
+			logger.Config{
+				SlowThreshold:             time.Second,
+				LogLevel:                  logger.Warn,
+				IgnoreRecordNotFoundError: true,
+				Colorful:                  false,
+			},
+		)
+
+		d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: logger,
+		})
 		if err != nil {
-			log.Fatalf("[ERROR]: failed to connect to the Data Base\n%s\n", err.Error())
+			utils.ErrLogger.Fatalf("Failed to connect to the Data Base - %s\n", err.Error())
+		} else {
+			utils.InfoLogger.Println("Successfully connected to the DB")
 		}
 
 		db = d
 	}
 }
 
-func GetDB() *gorm.DB {
+func GetDataBase() *gorm.DB {
 	return db
 }
