@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -18,11 +17,9 @@ var ServerErrorMsg []byte
 var BadRequestMsg []byte
 
 func ParseBody(r *http.Request, obj interface{}) bool {
-	if body, err := io.ReadAll(r.Body); err == nil {
-		if err := json.Unmarshal([]byte(body), obj); err != nil {
-			ErrLogger.Printf("Failed to decode JSON from request Body - %s\n", err.Error())
-			return false
-		}
+	if err := json.NewDecoder(r.Body).Decode(obj); err != nil {
+		ErrLogger.Printf("Failed to decode JSON from request Body - %s\n", err.Error())
+		return false
 	}
 	return true
 }
