@@ -3,6 +3,7 @@ package bots
 import (
 	"context"
 	"slack-bot/pkg/utils"
+	"time"
 
 	"github.com/shomali11/slacker"
 )
@@ -25,15 +26,31 @@ type SlackBot struct {
 func (s *SlackBot) Init() {
 	s.bot = slacker.NewClient(s.BotToken, s.AppToken)
 	s.setCommands(SlackCommands...)
+
+	s.setHandlers()
+}
+
+func (s *SlackBot) setHandlers() {
+	s.bot.Init(func() {
+		utils.InfoLogger.Println("Bot is initialized")
+	})
+
+	s.bot.Err(func(err string) {
+		utils.ErrorLogger.Println(err)
+	})
+
+	s.bot.DefaultCommand(func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+		response.Reply("I don't understand what you mean")
+	})
 }
 
 func (s *SlackBot) logEvents() {
 	for event := range s.bot.CommandEvents() {
 		utils.CommandLogger.Printf("BOT: %s ", s.Name)
-		utils.CommandLogger.Printf("TIME: %s ", event.Timestamp.Format("2000-01-01 12:00:00"))
+		utils.CommandLogger.Printf("TIME: %s ", event.Timestamp.Format(time.UnixDate))
 		utils.CommandLogger.Printf("COMMAND: %s ", event.Command)
 		utils.CommandLogger.Printf("PARAMETERS: %s", event.Parameters)
-		utils.CommandLogger.Printf("EVENT: %s\n", event.Event)
+		utils.CommandLogger.Printf("EVENT: %s\n\n", event.Event)
 	}
 }
 

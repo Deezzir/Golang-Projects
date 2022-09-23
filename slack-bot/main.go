@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	utils.InfoLogger.Printf("%v", utils.ListDir("attachments"))
+
 	bot := &bots.SlackBot{
 		Name:     "Noxu-Bot",
 		BotToken: config.SLACK_BOT_TOKEN,

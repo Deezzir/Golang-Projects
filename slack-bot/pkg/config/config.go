@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	SLACK_BOT_TOKEN string
-	SLACK_APP_TOKEN string
+	SLACK_BOT_TOKEN    string
+	SLACK_APP_TOKEN    string
+	ATTACHMENTS_FOLDER = "attachments"
 )
 
 func init() {
