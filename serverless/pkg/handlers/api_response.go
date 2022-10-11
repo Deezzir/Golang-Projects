@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"serverless-yt/pkg/utils"
+	"serverless/pkg/utils"
 
 	"github.com/aws/aws-lambda-go/events"
 )

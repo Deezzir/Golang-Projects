@@ -12,6 +12,10 @@ var (
 	WarnLogger *log.Logger
 )
 
+type ErrorBody struct {
+	Message string `json:"error,omitempty"`
+}
+
 var (
 	emailRegexp = regexp.MustCompile("(?i)" + // case insensitive
 		"^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+" + // local part

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"serverless-yt/pkg/handlers"
+	"serverless/pkg/handlers"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )

@@ -2,13 +2,12 @@ package config
 
 import (
 	"os"
-	"serverless-yt/pkg/utils"
+	"serverless/pkg/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -17,28 +16,16 @@ var (
 )
 
 func init() {
-	loadEnv()
 	setEnv()
-}
-
-func loadEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		utils.ErrLogger.Fatalf("Failed to load the .env file - %s\n", err.Error())
-
-	}
 }
 
 func setEnv() {
 	AWS_REGION = os.Getenv("AWS_REGION")
 	if AWS_REGION == "" {
-		utils.ErrLogger.Fatalln("AWS_REGION is not set in .env file")
+		utils.ErrLogger.Fatalln("AWS_REGION is not set")
 	}
 
-	TABLE_NAME = os.Getenv("TABLE_NAME")
-	if TABLE_NAME == "" {
-		utils.ErrLogger.Fatalln("TABLE_NAME is not set in .env file")
-	}
+	TABLE_NAME = "go-serverless"
 }
 
 func SetAWSSession() dynamodbiface.DynamoDBAPI {
